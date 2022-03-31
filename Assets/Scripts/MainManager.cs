@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -11,10 +9,12 @@ public class MainManager : MonoBehaviour
     public Rigidbody Ball;
 
     public Text ScoreText;
+    public Text HighscoreText;
     public GameObject GameOverText;
     
     private bool m_Started = false;
     private int m_Points;
+    private string m_player;
     
     private bool m_GameOver = false;
 
@@ -36,6 +36,10 @@ public class MainManager : MonoBehaviour
                 brick.onDestroyed.AddListener(AddPoint);
             }
         }
+        m_player = PersistenceManager.Instance.PlayerName;
+        HighscoreText.text = "Highscore: " + PersistenceManager.Instance.HighscorePlayerName + ": " +
+                             PersistenceManager.Instance.HighScore;
+        AddPoint(0);
     }
 
     private void Update()
@@ -53,24 +57,25 @@ public class MainManager : MonoBehaviour
                 Ball.AddForce(forceDir * 2.0f, ForceMode.VelocityChange);
             }
         }
-        else if (m_GameOver)
+        else if (m_GameOver && Input.GetKeyDown(KeyCode.Space))
         {
-            if (Input.GetKeyDown(KeyCode.Space))
-            {
-                SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
-            }
+            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         }
     }
 
-    void AddPoint(int point)
+    private void AddPoint(int point)
     {
         m_Points += point;
-        ScoreText.text = $"Score : {m_Points}";
+        ScoreText.text = $"{m_player} Score : {m_Points}";
     }
 
     public void GameOver()
     {
         m_GameOver = true;
         GameOverText.SetActive(true);
+        if(m_Points > PersistenceManager.Instance.HighScore)
+        {
+            PersistenceManager.Instance.SaveHighscore(m_Points);
+        }
     }
 }

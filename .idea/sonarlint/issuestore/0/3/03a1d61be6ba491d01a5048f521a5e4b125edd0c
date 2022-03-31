@@ -1,0 +1,3 @@
+
+csharpsquid:S1210^"XWhen implementing IComparable<T>, you should also override Equals, ==, !=, <, <=, >, >=.(Š­Í™ÿÿÿÿÿ8ÈÁøŠş/
+Ncsharpsquid:S3903"1Move 'PersistenceManager' into a named namespace.(€­œ¡
