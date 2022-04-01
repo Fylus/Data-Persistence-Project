@@ -22,8 +22,9 @@ public class PersistenceManager : MonoBehaviour
         private set => _instance = value;
     }
 
-    public int HighScore { get; private set; }
-    public string HighscorePlayerName { get; private set; }
+    public Highscore BestHighscore => HList.Highscores[0];
+    public int HighScoreScore => BestHighscore.Score;
+    public string HighscorePlayerName => BestHighscore.Name;
 
     public string PlayerName { get; set; }
 
@@ -43,7 +44,21 @@ public class PersistenceManager : MonoBehaviour
 
         PlayerName = "Unknown";
         DontDestroyOnLoad(gameObject);
+        Load();
+    }
 
+    public void Save(int mPoints)
+    {
+        var saveData = new Highscore(PlayerName, mPoints);
+        HList.Add(saveData);
+        var json =  JsonUtility.ToJson(HList);
+        print("json: " + json);
+        File.WriteAllText(Application.persistentDataPath + "/highscorelist.json", json);
+        print("Saved" + HList.Highscores.Count);
+    }
+
+    public void Load()
+    {
         if (HList == null)
         {
             var path = Application.persistentDataPath + "/highscorelist.json";
@@ -57,48 +72,19 @@ public class PersistenceManager : MonoBehaviour
                 HList = JsonUtility.FromJson<HighscoreList>(json);
             }
         }
-
-        Load();
-    }
-
-    public void Save()
-    {
-        var saveData = new Highscore(HighscorePlayerName, HighScore);
-        HList.Add(saveData);
-        var json = JsonUtility.ToJson(saveData);
-        print("Data saved: " + json);
-        File.WriteAllText(Application.persistentDataPath + "/savefile.json", json);
-
-
-        json = JsonUtility.ToJson(HList);
-        File.WriteAllText(Application.persistentDataPath + "/highscorelist.json", json);
-    }
-
-    public void Load()
-    {
-        var path = Application.persistentDataPath + "/savefile.json";
-        print("load");
-        if (!File.Exists(path)) return;
-        var json = File.ReadAllText(path);
-        var saveData = JsonUtility.FromJson<Highscore>(json);
-        print("Data read from file: " + saveData.playerName + " " + saveData.score);
-        HighScore = saveData.score;
-        HighscorePlayerName = saveData.playerName;
-        foreach (var hListHighscore in HList.highscores)
-        {
-            print(hListHighscore.playerName + " " + hListHighscore.score);
-        }
     }
 
     [Serializable]
-    private sealed class Highscore : IComparable<Highscore>
+    public class Highscore : IComparable<Highscore>
     {
-        public int score;
-        public string playerName;
+        [SerializeField] private int score;
+        [SerializeField] private string name;
+        public int Score => score;
+        public string Name => name;
 
         public Highscore(string playerName, int score)
         {
-            this.playerName = playerName;
+            this.name = playerName;
             this.score = score;
         }
 
@@ -106,14 +92,22 @@ public class PersistenceManager : MonoBehaviour
         {
             if (ReferenceEquals(this, other)) return 0;
             if (ReferenceEquals(null, other)) return 1;
-            return score.CompareTo(other.score);
+            return Score.CompareTo(other.Score);
         }
+        
+        public override string ToString()
+        {
+            return $"{Name} - {Score}";
+        }
+        
+       
     }
 
     [Serializable]
     private sealed class HighscoreList
     {
-        public List<Highscore> highscores;
+        [SerializeField] private List<Highscore> highscores;
+        public List<Highscore> Highscores => highscores;    
 
         public HighscoreList()
         {
@@ -126,16 +120,17 @@ public class PersistenceManager : MonoBehaviour
             highscores.Sort();
             highscores.Reverse();
             if (highscores.Count > 5)
-            {
+            {   
                 highscores.RemoveAt(5);
             }
+            print("added "  + highscore);
         }
     }
 
+    public static List<Highscore> GetHighscores => HList.Highscores;
+
     public void SaveHighscore(int mPoints)
     {
-        HighscorePlayerName = PlayerName;
-        HighScore = mPoints;
-        Save();
+        Save(mPoints);
     }
 }

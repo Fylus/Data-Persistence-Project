@@ -38,7 +38,7 @@ public class MainManager : MonoBehaviour
         }
         m_player = PersistenceManager.Instance.PlayerName;
         HighscoreText.text = "Highscore: " + PersistenceManager.Instance.HighscorePlayerName + ": " +
-                             PersistenceManager.Instance.HighScore;
+                             PersistenceManager.Instance.HighScoreScore;
         AddPoint(0);
     }
 
@@ -73,9 +73,8 @@ public class MainManager : MonoBehaviour
     {
         m_GameOver = true;
         GameOverText.SetActive(true);
-        if(m_Points > PersistenceManager.Instance.HighScore)
-        {
+       
             PersistenceManager.Instance.SaveHighscore(m_Points);
-        }
+        
     }
 }

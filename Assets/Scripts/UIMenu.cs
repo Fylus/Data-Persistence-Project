@@ -11,13 +11,18 @@ public class UIMenu : MonoBehaviour
     private void Start()
     {
         scoreText.text = "Score: " + PersistenceManager.Instance.HighscorePlayerName + 
-                                 ": " + PersistenceManager.Instance.HighScore;
+                                 ": " + PersistenceManager.Instance.HighScoreScore;
     }
     
     public void NewGame()
     {
         PersistenceManager.Instance.PlayerName = inputField.text;
         SceneManager.LoadScene(1);
+    }
+    
+    public void ToHighscore()
+    {
+        SceneManager.LoadScene(2);
     }
 
     public void Exit()
