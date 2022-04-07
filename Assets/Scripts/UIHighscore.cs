@@ -13,7 +13,7 @@ public class UIHighscore : MonoBehaviour
     {
         print("Start Highscore");
         int counter = 0;
-        List<PersistenceManager.Highscore> list = PersistenceManager.GetHighscores();
+        List<PersistenceManager.Highscore> list = PersistenceManager.GetHighscores;
         foreach (PersistenceManager.Highscore highscore in list)
         {
             TextMeshProUGUI panel = Instantiate(highscorePanel, canvas.transform).GetComponent<TextMeshProUGUI>();

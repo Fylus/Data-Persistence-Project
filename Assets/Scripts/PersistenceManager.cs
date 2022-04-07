@@ -45,6 +45,7 @@ public class PersistenceManager : MonoBehaviour
         PlayerName = "Unknown";
         DontDestroyOnLoad(gameObject);
         Load();
+        LoadColors();
     }
 
     public void Save(int mPoints)
@@ -132,5 +133,52 @@ public class PersistenceManager : MonoBehaviour
     public void SaveHighscore(int mPoints)
     {
         Save(mPoints);
+    }
+
+    public Color[] Colors { get; private set; }
+
+    private void LoadColors()
+    {
+        var path = Application.persistentDataPath + "/colordata.json";
+        if (!File.Exists(path))
+        {
+           Colors = new Color[2];
+           Colors[0] = Color.white;
+           Colors[1] = Color.white;
+        }
+        else
+        {
+            var json = File.ReadAllText(path);
+            ColorData data = JsonUtility.FromJson<ColorData>(json);
+            Colors = data.Colors;
+        }
+        
+    }
+
+    public void SetColors(Color[] colors)
+    {
+        Colors = colors;
+        ColorData data = new ColorData(Colors);
+        var json =  JsonUtility.ToJson(data);
+        print("json: " + json);
+        File.WriteAllText(Application.persistentDataPath + "/colordata.json", json);
+    }
+
+    [Serializable]
+    private sealed class ColorData
+    {
+        [SerializeField] private Color[] colors;
+
+        public Color[] Colors
+        {
+            get => colors;
+            set => colors = value;
+        }
+
+        public ColorData(Color[] colors)
+        {
+            this.colors = colors;
+        }
+        
     }
 }

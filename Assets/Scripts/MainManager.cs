@@ -8,6 +8,9 @@ public class MainManager : MonoBehaviour
     public int LineCount = 6;
     public Rigidbody Ball;
 
+    [SerializeField] private GameObject _paddleGO;
+    [SerializeField] private GameObject _ballGO;
+
     public Text ScoreText;
     public Text HighscoreText;
     public GameObject GameOverText;
@@ -37,6 +40,9 @@ public class MainManager : MonoBehaviour
             }
         }
         m_player = PersistenceManager.Instance.PlayerName;
+        Color[] colors = PersistenceManager.Instance.Colors;
+        _paddleGO.GetComponent<Renderer>().material.color = colors[0];
+        _ballGO.GetComponent<Renderer>().material.color = colors[1];
         HighscoreText.text = "Highscore: " + PersistenceManager.Instance.HighscorePlayerName + ": " +
                              PersistenceManager.Instance.HighScoreScore;
         AddPoint(0);

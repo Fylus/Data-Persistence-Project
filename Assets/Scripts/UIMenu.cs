@@ -24,6 +24,11 @@ public class UIMenu : MonoBehaviour
     {
         SceneManager.LoadScene(2);
     }
+    
+    public void ToSettings()
+    {
+        SceneManager.LoadScene(3);
+    }
 
     public void Exit()
     {
